@@ -1,0 +1,2 @@
+# JavsdtDotNet
+.net core
