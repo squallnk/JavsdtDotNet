@@ -9,14 +9,16 @@ namespace Javsdt.Shared
     {
         public static string CurrentDirectory = Environment.CurrentDirectory;
 
-        //Web Api用下面
-        //public static string ProjectDirectory = Path.GetFullPath(@"..\");
-        //SQL项目用下面
-        public static string? ProjectDirectory = Directory.GetParent(CurrentDirectory)?.Parent?.Parent?.Parent?.FullName;
-        //示例
+        //（1）Web Api用下面
+        public static string ProjectDirectory = Path.GetFullPath(@"..\");
+
+        //（2）SQL项目用下面
+        //public static string? ProjectDirectory = Directory.GetParent(CurrentDirectory)?.Parent?.Parent?.Parent?.FullName;
+
+        //（3）固定值
         //public static string ProjectDirectory = @"D:\MyGit\MyProjects\JavsdtDotNet";
 
-        public static string JsonsDirectory = @"D:\MyData\收集的json";
+        public static string JsonsDirectory = @"D:\MyData\AlreadyJsons";
         public static string NewJsonsDirectory = @$"{JsonsDirectory}\第6批json";
         public static string TestJsonsDirectory = @$"{JsonsDirectory}\单独测试";
         public static string ErrorJsonsPath = @$"{JsonsDirectory}\错误的json";

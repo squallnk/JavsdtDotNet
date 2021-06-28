@@ -1,8 +1,6 @@
 ﻿using Javsdt.Shared;
 using Javsdt.SQL.Init;
-using Javsdt.SQL.Json;
 using System;
-using System.IO;
 
 namespace Javsdt.SQL
 {
@@ -10,8 +8,8 @@ namespace Javsdt.SQL
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(EnvSettings.CurrentDirectory);
-            Console.WriteLine(EnvSettings.ProjectDirectory);
+            //Console.WriteLine(EnvSettings.CurrentDirectory);
+            //Console.WriteLine(EnvSettings.ProjectDirectory);
             var context = new JavsdtContext();
             DbInitializer.Initialize(context);
 

@@ -26,9 +26,10 @@ namespace Javsdt.API
             // 数据库连接
             //services.AddDbContext<JavsdtContext>(options => options.UseSqlite(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db"));
             //System.Console.WriteLine(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db");
+            System.Console.WriteLine(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db");
             services.AddDbContext<JavsdtContext>(options => options.UseSqlite(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db"));
             // 数据库EF服务
-            services.AddScoped<GetRepository>();
+            services.AddScoped<MyRepository>();
             // 允许所有请求
             services.AddCors(options =>
             {

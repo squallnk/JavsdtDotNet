@@ -81,7 +81,7 @@ namespace Javsdt.SQL.Json
                 // 1
                 Car = mj.Car,
                 // 2
-                CarOrigin = string.IsNullOrEmpty(mj.CarOriginLibrary) ? null : mj.CarOriginLibrary,
+                CarOrigin = string.IsNullOrEmpty(mj.CarOrigin) ? null : mj.CarOrigin,
                 // 3
                 CarPref = carPrefString,
                 // 4
@@ -94,27 +94,36 @@ namespace Javsdt.SQL.Json
                 Plot = (string.IsNullOrEmpty(mj.Plot)) ? null : mj.Plot,
                 // 8
                 PlotZh = (string.IsNullOrEmpty(mj.PlotZh)) ? null : mj.PlotZh,
-                //// 9
+                // 9
+                Review = (string.IsNullOrEmpty(mj.Review)) ? null : mj.Review,
+                // 10
                 Score = int.Parse((float.Parse(mj.Score) * 10).ToString()),
-                //// 10
-                //Runtime = int.Parse(mj.Runtime),
-                //// 11
-                //Year = int.Parse(release.Substring(0, 4)),
-                //// 12
-                //Release = DateTime.ParseExact(release, "yyyy-MM-dd", CultureInfo.CurrentCulture),
-                //// 14
-                //CutType = CutType.Left,
+                // 11
+                Runtime = int.Parse(mj.Runtime),
+                // 12
+                Year = int.Parse(release.Substring(0, 4)),
+                // 13
+                Release = DateTime.ParseExact(release, "yyyy-MM-dd", CultureInfo.CurrentCulture),
+                // 14 封面Library
+                CoverLibrary = (string.IsNullOrEmpty(mj.CoverLibrary)) ? null : mj.CoverLibrary,
+                // 15 封面Bus
+                CoverBus = (string.IsNullOrEmpty(mj.CoverBus)) ? null : mj.CoverBus,
+                // 16
+                CutType = mj.CutType,
 
-                //// 15
-                //Javlibrary = (string.IsNullOrEmpty(mj.Javlibrary)) ? null : mj.Javlibrary,
-                //// 16
-                //Javbus = mj.Car,
-                //// 17
-                //Javdb = (string.IsNullOrEmpty(mj.Javdb)) ? null : mj.Javdb,
-                //// 18
-                //Arzon = (string.IsNullOrEmpty(mj.Arzon)) ? null : mj.Arzon,
-                //// 19
-                //TimeModify = DateTime.Now,
+                // 17
+                Javdb = (string.IsNullOrEmpty(mj.Javdb)) ? null : mj.Javdb,
+                // 18
+                Javlibrary = (string.IsNullOrEmpty(mj.Javlibrary)) ? null : mj.Javlibrary,
+                // 19
+                Javbus = (string.IsNullOrEmpty(mj.Javbus)) ? null : mj.Javbus,
+                // 20
+                Arzon = (string.IsNullOrEmpty(mj.Arzon)) ? null : mj.Arzon,
+
+                // 22 完成度，三大网站为全部
+                Completion = mj.Completion,
+                // 23 版本
+                Version = mj.Version,
             };
 
             #region 系列

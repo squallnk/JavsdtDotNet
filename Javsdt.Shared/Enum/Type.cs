@@ -38,9 +38,17 @@
 
     public enum PreferLanguage
     {
-        zh = 0,
-        jp = 1,
-        cht =2,
+        zh = 1,
+        jp = 2,
+        cht =3,
+    }
+
+    public enum CompletionStatus
+    {
+        Unknown = 0,
+        OnlyDb = 1,
+        DbAndLibrary = 2,
+        DbAndLibraryAndBus = 3,
     }
 
 }

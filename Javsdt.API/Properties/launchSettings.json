@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://0.0.0.0:9000",
+      "applicationUrl": "http://localhost:9000",
       "sslPort": 0
     }
   },
@@ -12,7 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/movie/abp-1/language/false",
+      "launchUrl": "api/movies/amount",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
