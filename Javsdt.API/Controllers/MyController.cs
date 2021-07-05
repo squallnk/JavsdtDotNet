@@ -1,9 +1,10 @@
 ﻿using Javsdt.API.SQL;
+using Javsdt.API.Utility.Safe;
 using Javsdt.Shared.DTO;
+using Javsdt.Shared.Model.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Javsdt.API.Controllers
@@ -11,19 +12,36 @@ namespace Javsdt.API.Controllers
     [ApiController]
     public class MyController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly MyRepository _myRepository;
 
-        public MyController(MyRepository myRepository)
+        public MyController(MyRepository myRepository, IConfiguration config)
         {
+            _config = config;
             _myRepository = myRepository;
+        }
+
+        // 0 获取当前数据库收纳的条数
+        [HttpGet("api/movies/amount")]
+        public string GetMoviesAmount()
+        {
+            int amount = _myRepository.CountMoviesAmount();
+            return $"当前收纳: {amount}条";
         }
 
         // 1 依据Car获取某个Movie的详情
         [HttpPost("api/movies/search")]
-        public async Task<MovieRes[]> GetMoviesByCar([FromBody]string car)
+        public async Task<ActionResult<MovieRes[]>> GetMoviesByCar([FromBody] MoviesSearch moviesSearch)
         {
-            Console.WriteLine($"正在处理: {car}");
-            MovieRes[] movies = await _myRepository.SelectMoviesByCar(car.ToUpper());
+            string rsaVerification = moviesSearch.RsaVerification;
+            if (! RsaHandler.IsValidClient(rsaVerification, _config["ServerIdentity"], _config["RsaPrivateKey"]))
+            {
+                return Unauthorized();
+            }
+            string car = moviesSearch.Car.ToUpper();
+            //Console.WriteLine($"正在处理: {car}");
+            //Console.WriteLine($"客户端验证: {rsaVerification}");
+            MovieRes[] movies = await _myRepository.SelectMoviesByCar(car);
             foreach (MovieRes movie in movies)
             {
                 Task<CastPreview[]> castTask = _myRepository.SelectCastsByMovieId(movie.Id);
@@ -39,12 +57,23 @@ namespace Javsdt.API.Controllers
             return movies;
         }
 
-        // 2 获取当前数据库收纳的条数
-        [HttpGet("api/movies/amount")]
-        public string GetMoviesAmount()
+        // 2 依据Car获取某个Movie的详情
+        [HttpPost("api/movies/create")]
+        public async Task<ActionResult<MovieJson>> CreateMovie([FromBody] MovieNew movieNew)
         {
-            int amount = _myRepository.CountMoviesAmount();
-            return $"当前收纳: {amount}条";
+            string rsaVerification = movieNew.RsaVerification;
+            if (!RsaHandler.IsValidClient(rsaVerification, _config["ServerIdentity"], _config["RsaPrivateKey"]))
+            {
+                return Unauthorized();
+            }
+            if (_myRepository.ExistMovieByCarOrigin(movieNew.Car))
+            {
+                return Accepted();
+            }
+            MovieJson movieJson = movieNew;
+            await _myRepository.AddMovieAsync(movieJson);
+            return Ok();
         }
+
     }
 }

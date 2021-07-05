@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace Javsdt.API
 {
@@ -24,9 +25,6 @@ namespace Javsdt.API
             // WebApi控制器
             services.AddControllers();
             // 数据库连接
-            //services.AddDbContext<JavsdtContext>(options => options.UseSqlite(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db"));
-            //System.Console.WriteLine(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db");
-            System.Console.WriteLine(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db");
             services.AddDbContext<JavsdtContext>(options => options.UseSqlite(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db"));
             // 数据库EF服务
             services.AddScoped<MyRepository>();
@@ -35,6 +33,8 @@ namespace Javsdt.API
             {
                 options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             });
+            // 缓存
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

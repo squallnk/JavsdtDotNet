@@ -1,7 +1,6 @@
-﻿using Javsdt.Shared;
-using Javsdt.Shared.Model;
-using Javsdt.Shared.Model.Middle;
-using Javsdt.Shared.Model.Property;
+﻿using Javsdt.Shared.Model.SQL;
+using Javsdt.Shared.Model.SQL.Middle;
+using Javsdt.Shared.Model.SQL.Property;
 using Microsoft.EntityFrameworkCore;
 
 namespace Javsdt.API

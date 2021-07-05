@@ -39,8 +39,8 @@
     public enum PreferLanguage
     {
         zh = 1,
-        jp = 2,
-        cht =3,
+        cht = 2,
+        jp = 3,
     }
 
     public enum CompletionStatus

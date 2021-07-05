@@ -1,4 +1,6 @@
 ﻿using Javsdt.Shared.DTO;
+using Javsdt.Shared.Model.Client;
+using Javsdt.SQL.Json;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -46,6 +48,25 @@ namespace Javsdt.API.SQL
             return movies;
         }
 
+        internal bool ExistMovieByCarOrigin(string car)
+        {
+            if (string.IsNullOrEmpty(car))
+            {
+                return true;
+            }
+            else
+            {
+                if (_context.Movies.FirstOrDefault(movie => movie.Car == car) != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         internal int CountMoviesAmount()
         {
             return _context.Movies.Count();
@@ -61,6 +82,11 @@ namespace Javsdt.API.SQL
                                                                         })
                                                                         .ToArrayAsync();
             return companys;
+        }
+
+        public async Task AddMovieAsync(MovieJson movieJson)
+        {
+            await WriteWorker.AddNewMovieAsync(movieJson);
         }
 
         public async Task<CastPreview[]> SelectCastsByMovieId(int id)

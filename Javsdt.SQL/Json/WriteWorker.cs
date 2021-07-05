@@ -1,8 +1,10 @@
-﻿using Javsdt.Shared;
+﻿
+using Javsdt.Shared;
 using Javsdt.Shared.Enum;
-using Javsdt.Shared.Model;
-using Javsdt.Shared.Model.Middle;
-using Javsdt.Shared.Model.Property;
+using Javsdt.Shared.Model.Client;
+using Javsdt.Shared.Model.SQL;
+using Javsdt.Shared.Model.SQL.Middle;
+using Javsdt.Shared.Model.SQL.Property;
 using Javsdt.SQL.Init;
 using Newtonsoft.Json;
 using System;
@@ -12,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Javsdt.SQL.Json
 {
@@ -37,7 +40,8 @@ namespace Javsdt.SQL.Json
                 Console.WriteLine(movieJson.Car);
 
                 // 添加新影片到数据库;
-                AddNewMovie(movieJson);
+                Task.Run(async () => await AddNewMovieAsync(movieJson)).Wait();
+
                 //Movie movieSearch = context.Movies.FirstOrDefault(m => m.Id == mj.dmm_id);
                 //if (movieSearch == null)
                 //{
@@ -52,14 +56,14 @@ namespace Javsdt.SQL.Json
 
         }
 
-        private static void AddNewMovie(MovieJson mj)
+        public static async Task AddNewMovieAsync(MovieJson mj)
         {
             using JavsdtContext context = new();
 
             // ====车牌去除左边的0====
             string[] carArrary = mj.Car.Split("-");
             string carPrefString = carArrary[0];
-            string carSufString = carArrary[1];    //.TrimStart('0');
+            string carSufString = carArrary[1].TrimStart('0');    //.TrimStart('0');
                                                    //carSufString = Regex.Replace(carSufString, "[a-z]", "");
 
             // ====车牌前缀====
@@ -71,9 +75,6 @@ namespace Javsdt.SQL.Json
 
             // 年份
             string release = (string.IsNullOrEmpty(mj.Release)) ? "1970-01-01" : mj.Release;
-            // 评分
-            mj.Score = (string.IsNullOrEmpty(mj.Score)) ? "0" : mj.Score;
-            // dmm
 
             // ====由MovieJson转换为Movie====
             Movie movie = new Movie
@@ -89,7 +90,7 @@ namespace Javsdt.SQL.Json
                 // 5
                 Title = mj.Title,
                 // 6
-                TitleZh = mj.TitleZh,
+                TitleZh = (string.IsNullOrEmpty(mj.TitleZh)) ? null : mj.TitleZh,
                 // 7
                 Plot = (string.IsNullOrEmpty(mj.Plot)) ? null : mj.Plot,
                 // 8
@@ -97,9 +98,9 @@ namespace Javsdt.SQL.Json
                 // 9
                 Review = (string.IsNullOrEmpty(mj.Review)) ? null : mj.Review,
                 // 10
-                Score = int.Parse((float.Parse(mj.Score) * 10).ToString()),
+                Score = mj.Score,
                 // 11
-                Runtime = int.Parse(mj.Runtime),
+                Runtime = mj.Runtime,
                 // 12
                 Year = int.Parse(release.Substring(0, 4)),
                 // 13
@@ -265,7 +266,7 @@ namespace Javsdt.SQL.Json
 
             // 收集完毕
             context.Movies.Add(movie);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }
