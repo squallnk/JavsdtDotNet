@@ -50,5 +50,11 @@
         DbAndLibrary = 2,
         DbAndLibraryAndBus = 3,
     }
+    public enum ResultType
+    {
+        Success = 1,
+        Unauthorized = 2,
+        SqlError = 3,
+    }
 
 }

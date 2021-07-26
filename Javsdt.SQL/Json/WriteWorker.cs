@@ -40,7 +40,8 @@ namespace Javsdt.SQL.Json
                 Console.WriteLine(movieJson.Car);
 
                 // 添加新影片到数据库;
-                Task.Run(async () => await AddNewMovieAsync(movieJson)).Wait();
+                //Task.Run(async () => await AddNewMovieAsync(movieJson)).Wait();
+                AddNewMovie(movieJson);
 
                 //Movie movieSearch = context.Movies.FirstOrDefault(m => m.Id == mj.dmm_id);
                 //if (movieSearch == null)
@@ -56,7 +57,7 @@ namespace Javsdt.SQL.Json
 
         }
 
-        public static async Task AddNewMovieAsync(MovieJson mj)
+        public static void AddNewMovie(MovieJson mj)
         {
             using JavsdtContext context = new();
 
@@ -266,7 +267,7 @@ namespace Javsdt.SQL.Json
 
             // 收集完毕
             context.Movies.Add(movie);
-            await context.SaveChangesAsync();
+            context.SaveChanges();
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using Javsdt.API.SQL;
+﻿using Javsdt.API.Common.Response;
+using Javsdt.API.SQL;
 using Javsdt.API.Utility.Safe;
 using Javsdt.Shared.DTO;
+using Javsdt.Shared.Enum;
 using Javsdt.Shared.Model.Client;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
@@ -14,11 +17,15 @@ namespace Javsdt.API.Controllers
     {
         private readonly IConfiguration _config;
         private readonly MyRepository _myRepository;
+        private IMemoryCache _cache;
+        private MemoryCacheEntryOptions _cacheEntryOptions;
 
-        public MyController(MyRepository myRepository, IConfiguration config)
+        public MyController(MyRepository myRepository, IConfiguration config, IMemoryCache cache)
         {
             _config = config;
             _myRepository = myRepository;
+            _cache = cache;
+            _cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(3));
         }
 
         // 0 获取当前数据库收纳的条数
@@ -31,48 +38,68 @@ namespace Javsdt.API.Controllers
 
         // 1 依据Car获取某个Movie的详情
         [HttpPost("api/movies/search")]
-        public async Task<ActionResult<MovieRes[]>> GetMoviesByCar([FromBody] MoviesSearch moviesSearch)
+        //[TypeFilter(typeof(MovieSearchResourceFilterAttribute))]
+        public async Task<MyResult> GetMoviesByCar([FromBody] MoviesSearch moviesSearch)
         {
+            #region 验证
             string rsaVerification = moviesSearch.RsaVerification;
             if (! RsaHandler.IsValidClient(rsaVerification, _config["ServerIdentity"], _config["RsaPrivateKey"]))
             {
-                return Unauthorized();
+                return new MyResult(ResultType.Unauthorized);
             }
+            #endregion
+
             string car = moviesSearch.Car.ToUpper();
             //Console.WriteLine($"正在处理: {car}");
             //Console.WriteLine($"客户端验证: {rsaVerification}");
-            MovieRes[] movies = await _myRepository.SelectMoviesByCar(car);
-            foreach (MovieRes movie in movies)
+
+            // Look for cache key.
+            if (!_cache.TryGetValue(car, out MovieRes[] movies))
             {
-                Task<CastPreview[]> castTask = _myRepository.SelectCastsByMovieId(movie.Id);
-                Task<CompanyPreview[]> companyTask = _myRepository.SelectCompanysByMovieId(movie.Id);
-                Task<string[]> genreTask = _myRepository.SelectGenresByMovieId(movie.Id);
-                Task<string[]> tagTask = _myRepository.SelectTagsByMovieId(movie.Id);
-                await Task.WhenAll(companyTask, castTask, genreTask, tagTask);
-                movie.Casts = await castTask;
-                movie.Companys = await companyTask;
-                movie.Genres = await genreTask;
-                movie.Tags = await tagTask;
+                movies = await _myRepository.SelectMoviesByCar(car);
+                foreach (MovieRes movie in movies)
+                {
+                    Task<CastPreview[]> castTask = _myRepository.SelectCastsByMovieId(movie.Id);
+                    Task<CompanyPreview[]> companyTask = _myRepository.SelectCompanysByMovieId(movie.Id);
+                    Task<string[]> genreTask = _myRepository.SelectGenresByMovieId(movie.Id);
+                    Task<string[]> tagTask = _myRepository.SelectTagsByMovieId(movie.Id);
+                    await Task.WhenAll(companyTask, castTask, genreTask, tagTask);
+                    movie.Casts = await castTask;
+                    movie.Companys = await companyTask;
+                    movie.Genres = await genreTask;
+                    movie.Tags = await tagTask;
+                }
+                // Save data in cache.
+                _cache.Set(car, movies, _cacheEntryOptions);
             }
-            return movies;
+
+            return new MyResult(ResultType.Success, movies);
         }
 
         // 2 依据Car获取某个Movie的详情
         [HttpPost("api/movies/create")]
-        public async Task<ActionResult<MovieJson>> CreateMovie([FromBody] MovieNew movieNew)
+        public MyResult CreateMovie([FromBody] MovieNew movieNew)
         {
+            #region 验证
             string rsaVerification = movieNew.RsaVerification;
             if (!RsaHandler.IsValidClient(rsaVerification, _config["ServerIdentity"], _config["RsaPrivateKey"]))
             {
-                return Unauthorized();
+                return new MyResult(ResultType.Unauthorized);
             }
-            if (_myRepository.ExistMovieByCarOrigin(movieNew.Car))
-            {
-                return Accepted();
-            }
+            #endregion
+
             MovieJson movieJson = movieNew;
-            await _myRepository.AddMovieAsync(movieJson);
-            return Ok();
+            try
+            {
+                _myRepository.AddMovie(movieJson);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("新增movie入库失败！");
+                return new MyResult(ResultType.SqlError);
+            }
+            _cache.Remove(movieNew.Car);
+            return new MyResult(ResultType.Success);
         }
 
     }

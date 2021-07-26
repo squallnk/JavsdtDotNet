@@ -84,9 +84,9 @@ namespace Javsdt.API.SQL
             return companys;
         }
 
-        public async Task AddMovieAsync(MovieJson movieJson)
+        public void AddMovie(MovieJson movieJson)
         {
-            await WriteWorker.AddNewMovieAsync(movieJson);
+            WriteWorker.AddNewMovie(movieJson);
         }
 
         public async Task<CastPreview[]> SelectCastsByMovieId(int id)

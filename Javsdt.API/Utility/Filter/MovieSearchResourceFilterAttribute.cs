@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Javsdt.API.Filter
 {
-    public class SelectCarsResourceFilterAttribute:Attribute, IResourceFilter
+    public class MovieSearchResourceFilterAttribute:Attribute, IResourceFilter
     {
         private IMemoryCache _cache;
 
-        public SelectCarsResourceFilterAttribute(IMemoryCache cache)
+        public MovieSearchResourceFilterAttribute(IMemoryCache cache)
         {
             _cache = cache;
         }
@@ -23,9 +23,8 @@ namespace Javsdt.API.Filter
 
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
-            string car = context.HttpContext.Request.Path;
-            throw new NotImplementedException();
-
+            string car = context.HttpContext.Request.Form["Car"];
+            Console.WriteLine(car);
         }
     }
 }

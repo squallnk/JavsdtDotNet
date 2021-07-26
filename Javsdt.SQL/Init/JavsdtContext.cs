@@ -11,8 +11,7 @@ namespace Javsdt.SQL.Init
         //单数据库用下面
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@$"Data Source={EnvSettings.ProjectDirectory}\Javsdt.db");
-            //optionsBuilder.UseSqlite(@"Data Source=..\Javsdt.db");
+            optionsBuilder.UseSqlite(@$"Data Source=..\..\..\..\Javsdt.db");
         }
 
         // Asp用下面
@@ -33,6 +32,9 @@ namespace Javsdt.SQL.Init
                 .HasOne(movie => movie.Series)
                 .WithMany(series => series.Movies)
                 .HasForeignKey(movie => movie.SeriesId);
+            modelBuilder.Entity<Movie>()
+                .HasIndex(movie=>new { movie.Car, movie.Release})
+                .IsUnique();
 
             modelBuilder.Entity<MovieCast>()
                 .HasOne(movieCast => movieCast.Movie)
