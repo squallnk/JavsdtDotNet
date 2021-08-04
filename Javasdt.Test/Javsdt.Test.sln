@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Javsdt.Test", "Javsdt.Test.csproj", "{EBAA2F02-957D-4DC3-A989-806BFBA3DE51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBAA2F02-957D-4DC3-A989-806BFBA3DE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBAA2F02-957D-4DC3-A989-806BFBA3DE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBAA2F02-957D-4DC3-A989-806BFBA3DE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBAA2F02-957D-4DC3-A989-806BFBA3DE51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96933BF1-7E72-4384-A9AB-C5A0B08323F0}
+	EndGlobalSection
+EndGlobal
