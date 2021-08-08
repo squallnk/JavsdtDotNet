@@ -12,5 +12,9 @@ namespace Javasdt.Shared.Statics
         #endregion
 
         public const string DbSpecifiedUrl = "仓库";
+
+        public const string DbSpecifiedRegex = @"仓库(\w+?)\.";
+
+        public const string DbSpecifiedErrorMsg = "你指定的javdb网址找不到jav: ";
     }
 }
