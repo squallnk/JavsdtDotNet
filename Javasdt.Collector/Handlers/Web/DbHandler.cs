@@ -7,6 +7,7 @@ using Javasdt.Shared.Enums;
 using Javasdt.Shared.Models.Scrape;
 using System.Text.RegularExpressions;
 using Javasdt.Shared.Exceptions;
+using Javasdt.Collector.Handlers.Metadata;
 
 namespace Javasdt.Collector.Handlers.Web
 {
@@ -29,23 +30,27 @@ namespace Javasdt.Collector.Handlers.Web
             {
                 HtmlDocument htmlDocument = web.Load(url, "GET", Proxy, null);
                 //通过判断返回内容的标题，来判断是否成功找出
-                var webTitle = htmlDocument.DocumentNode.SelectSingleNode("//title").InnerText;
-                if (webTitle.Contains(Commons.DbTitleNormalPart))
+                try
                 {
+                    htmlDocument.DocumentNode.SelectSingleNode("//title");
                     return htmlDocument;
                 }
-                else if(webTitle.Contains(Commons.DbTitleNotFoundPart))
+                catch (Exception e)
                 {
-                    throw new SpecifiedUrlException($"{Commons.DbSpecifiedErrorMsg}");
+                    Console.WriteLine($"Exception:\n{e}\n BaseException:\n{e.GetBaseException()} \n GetType:\n{e.GetType()} \nMessage:\n{e.Message}\n StackTrace:\n{e.StackTrace}");
+                    continue;
                 }
             }
-            throw new WebException();
+            Console.WriteLine(Commons.NetworkErrorMsg(url));
+            Console.ReadKey();
+            throw new NetworkException();
         }
 
         public ScrapeStatusEnum Scrape(MovieFile movieFile, MovieModel movieModel)
         {
             string urlOnDb;
-            string javdb;
+            string javadb;
+            //用户指定了网址，则直接得到jav所在网址
             if (movieFile.Name.Contains(Commons.DbSpecifiedUrl))
             {
                 Match match = Regex.Match(movieFile.Name, Commons.DbSpecifiedRegex);
@@ -53,18 +58,26 @@ namespace Javasdt.Collector.Handlers.Web
                 {
                     throw new SpecifiedUrlException($"{Commons.DbSpecifiedErrorMsg}");
                 }
-                javdb = match.Groups[1].Value;
-                urlOnDb = $"{UrlDb}/v/{javdb}";
+                javadb = match.Groups[1].Value;
+                urlOnDb = $"{UrlDb}/v/{javadb}";
                 HtmlDocument htmlDocument = GetHtml(urlOnDb);
-
-                //        url_jav_db = f'{url_db}/v/{javdb}'
-                //    html_jav_db = get_db_html(url_jav_db, proxy_db)
-                //    if re.search(r'頁面未找到', html_jav_db):
-                //        raise SpecifiedUrlError(f'你指定的javdb网址找不到jav: {url_jav_db}，')
-                //else:
-                //    # 指定的javlibrary网址有错误
-                //    raise SpecifiedUrlError(f'你指定的javdb网址有错误: ')
+                string webTitle = htmlDocument.DocumentNode.SelectSingleNode("//title").InnerText;
+                if (!webTitle.Contains(Commons.DbTitleNormalPart))
+                {
+                    throw new SpecifiedUrlException($"{Commons.DbSpecifiedErrorMsg}");
+                }
             }
+            //用户没有指定网址，则去搜索
+            else
+            {
+                //当前车牌的车头、车尾
+                string[] carSplits = movieFile.Car.Split("-");
+                string prefCurrent = carSplits[0];
+                int sufCurrent = int.Parse(CarHandler.ExtractNumberFromCarSuf(carSplits[1]));
+            }
+
+
+
             throw new NotImplementedException();
         }
     }
