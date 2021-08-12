@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Javasdt.Collector.Handlers.Metadata
+namespace Javasdt.Scrape.Handlers.Metadata
 {
     class GenreHandler
     {

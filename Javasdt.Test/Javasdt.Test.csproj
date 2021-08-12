@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Javasdt.Collector\Javasdt.Collector.csproj" />
+    <ProjectReference Include="..\Javasdt.Scrape\Javasdt.Scrape.csproj" />
   </ItemGroup>
 
 </Project>

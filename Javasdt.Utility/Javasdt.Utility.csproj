@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BouncyCastle" Version="1.8.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Javsdt.Shared\Javsdt.Shared.csproj" />
+    <ProjectReference Include="..\Javasdt.Shared\Javasdt.Shared.csproj" />
   </ItemGroup>
 
 </Project>

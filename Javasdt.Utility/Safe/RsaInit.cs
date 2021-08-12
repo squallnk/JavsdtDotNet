@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace Javsdt.Utility.Safe
+namespace Javasdt.Utility.Safe
 {
     public class RsaInit
     {

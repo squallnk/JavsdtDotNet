@@ -7,7 +7,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Javsdt.Utility
+namespace Javasdt.Utility
 {
     class Program
     {

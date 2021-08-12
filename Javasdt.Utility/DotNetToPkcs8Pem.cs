@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Javsdt.Utility
+namespace Javasdt.Utility
 {
     class DotNetToPkcs8Pem
     {

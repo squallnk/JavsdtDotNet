@@ -1,12 +1,13 @@
-﻿using Javasdt.Shared.Enums;
+﻿using HtmlAgilityPack;
+using Javasdt.Shared.Enums;
 using Javasdt.Shared.Models.Scrape;
 using System.Net;
 
-namespace Javasdt.Collector.Handlers.Web
+namespace Javasdt.Scrape.Handlers.Web
 {
     interface IWebHandler
     {
-        string GetHtml(string url);
+        HtmlDocument GetHtmlDocument(string url);
 
         ScrapeStatusEnum Scrape(MovieFile movieFile, MovieModel movieModel);
     }

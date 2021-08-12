@@ -1,9 +1,9 @@
 ﻿using Javasdt.Shared.Models.SQL;
 using System;
 
-namespace Javasdt.Collector
+namespace Javasdt.Scrape
 {
-    public class BusHandler
+    public class LibraryHandler
     {
         internal static void Collect(Movie movie)
         {

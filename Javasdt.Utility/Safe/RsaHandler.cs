@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Javsdt.API.Utility.Safe
+namespace Javasdt.API.Utility.Safe
 {
     public class RsaHandler
     {
