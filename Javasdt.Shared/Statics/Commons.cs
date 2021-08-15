@@ -15,7 +15,7 @@ namespace Javasdt.Shared.Statics
 
         public const string DbSpecifiedUrl = "仓库";
 
-        public const string DbSpecifiedRegex = @"仓库(\w+?)\.";
+        public const string DbSpecifiedRegex = "仓库(\\w+?)\\.";
 
         public const string DbSpecifiedErrorMsg = "你指定的javdb网址找不到jav: ";
 
@@ -23,6 +23,14 @@ namespace Javasdt.Shared.Statics
 
         public const string DbCodePageCarsXpath = "//*[@id=\"videos\"]/div/div[*]/a/div[2]/text()";
 
+        public const string DbVisiting = "    >前往javdb: ";
+
+        public const string DbTitleXpath = "//title";
+
         public static string UrlDbCodePage(string UrlDb, string prefCurrent, int noPage) => $"{UrlDb}/video_codes/{prefCurrent}?page={noPage}";
+
+        public static string DbCodePageTargetXpath(int index) => $"//*[@id=\"videos\"]/div/div[{index}]/a/@href";
+
+        public static string DbFormatUrlOnDb(string urlDb, string javdb) => $"{urlDb}/v/{javdb}";
     }
 }

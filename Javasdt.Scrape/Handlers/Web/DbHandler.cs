@@ -49,7 +49,6 @@ namespace Javasdt.Scrape.Handlers.Web
 
         public ScrapeStatusEnum Scrape(MovieFile movieFile, MovieModel movieModel)
         {
-            string urlOnDb;
             string javdb;
             //用户指定了网址，则直接得到jav所在网址
             if (movieFile.Name.Contains(Commons.DbSpecifiedUrl))
@@ -60,9 +59,9 @@ namespace Javasdt.Scrape.Handlers.Web
                     throw new SpecifiedUrlException($"{Commons.DbSpecifiedErrorMsg}");
                 }
                 javdb = match.Groups[1].Value;
-                urlOnDb = $"{UrlDb}/v/{javdb}";
-                HtmlDocument htmlDocument = GetHtmlDocument(urlOnDb);
-                string webTitle = htmlDocument.DocumentNode.SelectSingleNode("//title").InnerText;
+                string urlSpecified = $"{UrlDb}/v/{javdb}";
+                HtmlDocument htmlDocument = GetHtmlDocument(urlSpecified);
+                string webTitle = htmlDocument.DocumentNode.SelectSingleNode(Commons.DbTitleXpath).InnerText;
                 if (!webTitle.Contains(Commons.DbTitleNormalPart))
                 {
                     throw new SpecifiedUrlException($"{Commons.DbSpecifiedErrorMsg}");
@@ -77,13 +76,14 @@ namespace Javasdt.Scrape.Handlers.Web
                 int sufCurrent = CarHandler.ExtractNumberFromCarSuf(carSplits[1]);
                 //当前检查的第几页，当前页面的最小车尾
                 int noPage = 1;
-                int sufMin;
+                int sufMin;`
                 int sufMax;
                 HtmlDocument htmlDocument;
                 //车头的第一页
                 string urlCodePage = Commons.UrlDbCodePage(UrlDb, prefCurrent, noPage);
                 //第一页上的所有box
-                HtmlNode[] carsNodes = GetCarsHtmlNodes(GetHtmlDocument(urlCodePage));
+                htmlDocument = GetHtmlDocument(urlCodePage);
+                HtmlNode[] carsNodes = GetCarsHtmlNodes(htmlDocument);
                 if (carsNodes.Length == 0)
                 {
                     return ScrapeStatusEnum.Db_not_found;
@@ -129,11 +129,48 @@ namespace Javasdt.Scrape.Handlers.Web
                         {
                             return ScrapeStatusEnum.Db_not_found;
                         }
-                        javdb = 
+                        javdb = htmlDocument.DocumentNode.SelectSingleNode(Commons.DbCodePageTargetXpath(index)).InnerText;
+                    }
+                    //如果比 预估页面 的最小车尾 还小，页码依次往后+1；如果比 预估页面 的最大车尾 还大，页码依次往前-1
+                    else
+                    {
+                        int one = (sufCurrent < sufMin) ? 1 : -1;
+                        while (true)
+                        {
+                            noPage += one;
+                            if (noPage==0)
+                            {
+                                return ScrapeStatusEnum.Db_not_found;
+                            }
+                            urlCodePage = Commons.UrlDbCodePage(UrlDb, prefCurrent, noPage);
+                            htmlDocument = GetHtmlDocument(urlCodePage);
+                            carsNodes = GetCarsHtmlNodes(htmlDocument);
+                            //这一页已经没有内容了
+                            if (carsNodes.Length==0)
+                            {
+                                return ScrapeStatusEnum.Db_not_found;
+                            }
+                            int index = IndexOfCarsNodes(sufCurrent, carsNodes);
+                            if (index != 0)
+                            {
+                                javdb = htmlDocument.DocumentNode.SelectSingleNode(Commons.DbCodePageTargetXpath(index)).InnerText;
+                                break;
+                            }
+                            //当前车牌suf在这一首尾之间,但还是找不到,则退出
+                            sufMin = CarHandler.ExtractNumberFromCarSuf(carsNodes[0].InnerText);
+                            sufMax = CarHandler.ExtractNumberFromCarSuf(carsNodes[^0].InnerText);
+                            if (sufMax>sufCurrent && sufCurrent>sufMin)
+                            {
+                                return ScrapeStatusEnum.Db_not_found;
+                            }
+                        }
                     }
                 }
             }
-
+            string urlOnDb = Commons.DbFormatUrlOnDb(UrlDb, javdb);
+            Console.WriteLine($"{Commons.DbVisiting}{urlOnDb}");
+            HtmlDocument javDocument = GetHtmlDocument(urlOnDb);
+            string webTitle = 
 
 
             throw new NotImplementedException();
